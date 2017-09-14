@@ -1,0 +1,85 @@
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+J_001_TB3CMB_BootLd_005 -- RUN ON TB3CMB
+
+1) 08/24/2017   -- V02.01.13
+                  We have a working bootloader here
+                  I will tweak the design so that main program code loads
+                  into FLASH sectors FLASHC through FLASHJ, allowing it to
+                  use all available flash, asside from what is reserved for the 
+                  bootloader. This change is coordinated with  a change in
+                  the main program, and works with I_001_F281xTB3CMB_012.
+                  The substance of this change is a tweak to MCS.C to 
+                  recognize that a downloaded program with start load address
+                  0x3D8000 (start of FLASHJ) is the main program, and loads in
+                  FLASHC through FLASHJ.  Also tweak the bl_jumpToMain( ) function
+                  to use 0x3D8000 as the vector for jumping to the main program,
+                  and 0x3D8002 as a 2-word key field with a known value, to 
+                  assure that the main program has been burned into FLASH.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+J_001_TB3CMB_BootLd_004 -- RUN ON TB3CMB
+
+1) 08/24/2017   -- V02.01.006
+
+2) 08/25/2017   -- Adding documentation file BootLd.doc
+
+3) 8/28/2017    -- Changed TS3_DSP_Timestamp.vbs, and associated code in Excel so that
+                   LS Byte of Rev3 differentiates between Bootloader and Main DSP program
+                   0F-> Bootloader// 00->Dsp Main// 01, 02, 03-> FPGA
+
+4) 8/30/2017    -- V02.01.11
+                   Also modified TS3_DSP_Timestamp.vbs to behave like the comparable
+                   timestamping macro for the FPGA's -- so that it displays the revision
+                   and asks if you want to change it, giving you the options to
+                   -manually change the revision and update the timestamp,
+                   -not change the revision, still update the timestamp, or
+                   -don't change revision or timestamp.
+ 
+5) 8/31/2017   -- Solved a problem that has been vexing me all day.  Solved
+                  it by adding a statement at start of bl_main() to disable all
+                  CPU interrupts "DINT".  Caused no problem when powering up or
+                  running from the debugger. because these all start with interrupts
+                  disabled.  But after executing in main program where interrupts
+                  are enabled, then vectoring to the bootloader, code would fail to erase
+                  flash. Not entirely sure exactly what was happening in the failure.
+                  I am also going to modify the main progrm aso that it disables 
+                  interrupts before vectoring to the bootloader.
+                   
+6) 9/14/2017   -- V02.01.12
+                  We have a working bootloader here
+                  Works with I_001_F281xTB3CMB_011 main program
+                  These are designed to load main program code into Flash sectors
+                  FLASHC through FLASHF, with Bootloader code using FLASHA & FLASHB.
+                     
+                  I will roll both main program and bootloader to new versions
+                  and tweak the design so that main program code loads
+                  into FLASH sectors FLASHC through FLASHJ, allowing it to
+                  use all available flash, asside from what is reserved for the 
+                  bootloader..
+                 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+J_001_TB3CMB_BootLd_003 -- RUN ON TB3CMB
+
+1) 08/23/2017   -- This version successfully downloads an MCS file
+                   of new bootloader code -- 0x3F4000, length 0x4000
+                   and programs it into Flash sectors A and B.
+                   
+                   Also implement the Classic date and timestamp
+                   CAN commands, 2032.01 & .02, as well as the new
+                   TS3 date time and version CAN commands 204F.1 - .04
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+J_001_TB3CMB_BootLd_002 -- RUN ON TB3CMB
+
+1) 08/08/2017   -- Next step in the DSP Bootloader.
+                   Creating a separate CCS project, started by copying from I_001_F281xTB3CMB_010.
+                   Intention is to discard most of the source files.
+                   Shoot for a program that loads in FLASHA,
+                   Copies TI Flash Algorithms into RAM,
+                   And exercises the toggle-test, to see if clocks are running at proper
+                   speed to do FLASH programming.
+                   
+                   As of8/14/2017 -- some luch copying to RAM and running from RAM
+                   Ran Toggle_Test and saw 10KHz square wave on SCIATX.
+                   
